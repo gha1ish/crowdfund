@@ -2,6 +2,7 @@
  
 pragma solidity ^0.8.9;
  
+ // this contract will be deployed by me
 contract PublicFundProjectFactory {
     address payable[] public deployedPublicFundProjects;
  
@@ -14,7 +15,7 @@ contract PublicFundProjectFactory {
         return deployedPublicFundProjects;
     }
 }
- 
+ //We will facilitate the owner of some Project to deploy this contract to raise money from public
 contract PublicFundProject {
     struct Request {
         string description;
@@ -40,14 +41,14 @@ contract PublicFundProject {
         manager = creator;
         minimumContribution = minimum;
     }
- 
+ // To contribute in the listed Project
     function contribute() public payable {
         require(msg.value > minimumContribution);
  
         approvers[msg.sender] = true;
         approversCount++;
     }
- 
+ // This request is created by manager/owner of project
     function createRequest(string memory description, uint value, address recipient) public restricted {
         Request storage newRequest = requests.push(); 
         newRequest.description = description;
@@ -56,7 +57,7 @@ contract PublicFundProject {
         newRequest.complete= false;
         newRequest.approvalCount= 0;
     }
- 
+ // Anyone can approve request who has contributed some minimum amount in the project
     function approveRequest(uint index) public {
         Request storage request = requests[index];
  
@@ -66,7 +67,7 @@ contract PublicFundProject {
         request.approvals[msg.sender] = true;
         request.approvalCount++;
     }
- 
+ // Request is finalized by manager if it is approved by more than 50% of contributers
     function finalizeRequest(uint index) public restricted {
         Request storage request = requests[index];
  
@@ -76,7 +77,7 @@ contract PublicFundProject {
         payable(request.recipient).transfer(request.value);
         request.complete = true;
     }
-    
+    //It will return some important things from particular listed project on our platform
     function getSummary() public view returns (
       uint, uint, uint, uint, address
       ) {
