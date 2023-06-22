@@ -3,6 +3,8 @@ const solc = require("solc");
 const fs = require("fs-extra");
 
 const buildPath = path.resolve(__dirname, "build");
+
+//deleting pre-existing compiled files
 fs.removeSync(buildPath);
 
 const PublicFundProjectPath = path.resolve(
@@ -32,8 +34,10 @@ const output = JSON.parse(solc.compile(JSON.stringify(input))).contracts[
   "PublicFundProject.sol"
 ];
 
+//puting back our newly compiled files in build folder
 fs.ensureDirSync(buildPath);
 
+//looping for all the contracts available in PublicFundProject.sol
 for (let contract in output) {
   fs.outputJsonSync(
     path.resolve(buildPath, contract.replace(":", "") + ".json"),
